@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Lotto & Eurojackpot Generator</title>
+    <style>
+        :root {
+            --bg-color: #f2f2f7;
+            --card-bg: #ffffff;
+            --text-color: #1c1c1e;
+            --sub-color: #8e8e93;
+            --primary-color: #007aff;
+            --border-color: #e5e5ea;
+            --ball-main-bg: #ffcc00;
+            --ball-main-text: #000000;
+            --ball-extra-bg: #ff3b30;
+            --ball-extra-text: #ffffff;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #000000;
+                --card-bg: #1c1c1e;
+                --text-color: #ffffff;
+                --sub-color: #8e8e93;
+                --primary-color: #0a84ff;
+                --border-color: #38383a;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 16px 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            margin: 0 0 16px 0;
+            text-align: center;
+        }
+
+        .config-card {
+            background: var(--card-bg);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--sub-color);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        select, input[type="text"] {
+            width: 100%;
+            padding: 10px 12px;
+            font-size: 1rem;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            outline: none;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .checkbox-group input {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--primary-color);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            border: none;
+            padding: 14px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        button:active {
+            opacity: 0.8;
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            flex: 2;
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: var(--card-bg);
+            color: var(--primary-color);
+            border: 1px solid var(--border-color);
+            flex: 1;
+            font-size: 1.2rem;
+        }
+
+        .grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 14px;
+            padding: 14px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .card-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--sub-color);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .btn-delete {
+            background: none;
+            border: none;
+            color: var(--sub-color);
+            font-size: 1.2rem;
+            padding: 4px 8px;
+            cursor: pointer;
+            border-radius: 6px;
+        }
+
+        .balls-wrapper {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .balls-section {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .ball {
+            width: 36px;
+            height: 36px;
+            background: var(--ball-main-bg);
+            color: var(--ball-main-text);
+            font-weight: 700;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+            box-shadow: inset -2px -2px 4px rgba(0, 0, 0, 0.15);
+        }
+
+        .ball-extra {
+            background: var(--ball-extra-bg);
+            color: var(--ball-extra-text);
+        }
+
+        .divider {
+            width: 1px;
+            height: 30px;
+            background-color: var(--border-color);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Lotto & Eurojackpot</h1>
+
+        <div class="config-card">
+            <div class="form-group">
+                <label for="gameMode">Spielmodus</label>
+                <select id="gameMode">
+                    <option value="649">Lotto 6 aus 49</option>
+                    <option value="ejp">Eurojackpot (5 aus 50)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="excludedMain">Gesperrte Hauptzahlen (Kommagetrennt)</label>
+                <input type="text" id="excludedMain" value="1, 10, 20, 30, 40, 49" placeholder="z. B. 1, 10, 20">
+            </div>
+
+            <div class="form-group">
+                <label class="checkbox-group">
+                    <input type="checkbox" id="includeExtra" checked>
+                    <span id="extraLabelText">Zusatzzahl aktivieren</span>
+                </label>
+            </div>
+
+            <div class="form-group" id="extraExcludeGroup">
+                <label for="excludedExtra" id="extraExcludeLabel">Gesperrte Zusatzzahlen</label>
+                <input type="text" id="excludedExtra" value="" placeholder="z. B. 0 oder 1, 2">
+            </div>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn-primary" id="btnGenerate" type="button">Schein neu generieren</button>
+            <button class="btn-secondary" id="btnAddField" type="button" title="Feld hinzufügen">＋ Feld</button>
+        </div>
+
+        <div class="grid" id="ticketGrid"></div>
+    </div>
+
+    <script>
+        (function() {
+            let fieldCount = 12;
+
+            function parseNumbers(inputStr) {
+                return new Set(
+                    inputStr
+                        .split(',')
+                        .map(n => parseInt(n.trim(), 10))
+                        .filter(n => !isNaN(n))
+                );
+            }
+
+            function getRandomNumbers(count, max, excludedSet, min = 1) {
+                const nums = [];
+                let attempts = 0;
+                while (nums.length < count && attempts < 1000) {
+                    attempts++;
+                    const r = Math.floor(Math.random() * (max - min + 1)) + min;
+                    if (!excludedSet.has(r) && !nums.includes(r)) {
+                        nums.push(r);
+                    }
+                }
+                return nums.sort((a, b) => a - b);
+            }
+
+            function updateUI() {
+                const mode = document.getElementById('gameMode').value;
+                const includeExtra = document.getElementById('includeExtra').checked;
+                const extraGroup = document.getElementById('extraExcludeGroup');
+                const extraLabel = document.getElementById('extraLabelText');
+                const extraExcludeLabel = document.getElementById('extraExcludeLabel');
+
+                if (mode === '649') {
+                    extraLabel.textContent = 'Superzahl aktivieren (0–9)';
+                    extraExcludeLabel.textContent = 'Gesperrte Superzahl (0–9)';
+                } else {
+                    extraLabel.textContent = 'Eurozahlen aktivieren (2 aus 12)';
+                    extraExcludeLabel.textContent = 'Gesperrte Eurozahlen (1–12)';
+                }
+
+                extraGroup.style.display = includeExtra ? 'block' : 'none';
+            }
+
+            function generateTicket() {
+                const mode = document.getElementById('gameMode').value;
+                const includeExtra = document.getElementById('includeExtra').checked;
+                const excludedMain = parseNumbers(document.getElementById('excludedMain').value);
+                const excludedExtra = parseNumbers(document.getElementById('excludedExtra').value);
+
+                const grid = document.getElementById('ticketGrid');
+                grid.innerHTML = '';
+
+                for (let i = 1; i <= fieldCount; i++) {
+                    let mainNums = [];
+                    let extraNums = [];
+
+                    if (mode === '649') {
+                        mainNums = getRandomNumbers(6, 49, excludedMain, 1);
+                        if (includeExtra) {
+                            extraNums = getRandomNumbers(1, 9, excludedExtra, 0);
+                        }
+                    } else { // Eurojackpot
+                        mainNums = getRandomNumbers(5, 50, excludedMain, 1);
+                        if (includeExtra) {
+                            extraNums = getRandomNumbers(2, 12, excludedExtra, 1);
+                        }
+                    }
+
+                    const card = document.createElement('div');
+                    card.className = 'card';
+
+                    const header = document.createElement('div');
+                    header.className = 'card-header';
+
+                    const title = document.createElement('div');
+                    title.className = 'card-title';
+                    title.textContent = `FELD ${i}`;
+
+                    const delBtn = document.createElement('button');
+                    delBtn.className = 'btn-delete';
+                    delBtn.innerHTML = '✕';
+                    delBtn.title = 'Feld entfernen';
+                    delBtn.onclick = function() {
+                        if (fieldCount > 1) {
+                            fieldCount--;
+                            generateTicket();
+                        }
+                    };
+
+                    header.appendChild(title);
+                    if (fieldCount > 1) {
+                        header.appendChild(delBtn);
+                    }
+
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'balls-wrapper';
+
+                    const mainSection = document.createElement('div');
+                    mainSection.className = 'balls-section';
+                    mainNums.forEach(n => {
+                        const b = document.createElement('div');
+                        b.className = 'ball';
+                        b.textContent = n;
+                        mainSection.appendChild(b);
+                    });
+
+                    wrapper.appendChild(mainSection);
+
+                    if (includeExtra && extraNums.length > 0) {
+                        const divider = document.createElement('div');
+                        divider.className = 'divider';
+                        wrapper.appendChild(divider);
+
+                        const extraSection = document.createElement('div');
+                        extraSection.className = 'balls-section';
+                        extraNums.forEach(n => {
+                            const b = document.createElement('div');
+                            b.className = 'ball ball-extra';
+                            b.textContent = n;
+                            extraSection.appendChild(b);
+                        });
+                        wrapper.appendChild(extraSection);
+                    }
+
+                    card.appendChild(header);
+                    card.appendChild(wrapper);
+                    grid.appendChild(card);
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                document.getElementById('gameMode').addEventListener('change', function() {
+                    updateUI();
+                    generateTicket();
+                });
+
+                document.getElementById('includeExtra').addEventListener('change', function() {
+                    updateUI();
+                    generateTicket();
+                });
+
+                document.getElementById('excludedMain').addEventListener('input', generateTicket);
+                document.getElementById('excludedExtra').addEventListener('input', generateTicket);
+
+                document.getElementById('btnGenerate').addEventListener('click', generateTicket);
+
+                document.getElementById('btnAddField').addEventListener('click', function() {
+                    fieldCount++;
+                    generateTicket();
+                });
+
+                updateUI();
+                generateTicket();
+            });
+        })();
+    </script>
+</body>
+</html>
